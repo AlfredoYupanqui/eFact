@@ -32,9 +32,9 @@ public class ReportSalesRecordImpDao extends OracleDaoFactory implements ReportS
             st.setDate(4, object.getQueryTo());
             st.setInt(5, object.getQueryVoucher());
             st.setInt(6, object.getQuerySerie());
-            st.setString(7, "EFACT");
-            st.setInt(8, object.getQueryTipoDoi());
-            st.setString(9, object.getQueryNumeroDoi());
+            st.setInt(7, object.getQueryTipoDoi());
+            st.setString(8, object.getQueryNumeroDoi());
+            st.setString(9, "EFACT");
             st.execute();
             
             ResultSet rs = (ResultSet) st.getObject(1);

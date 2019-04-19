@@ -163,6 +163,7 @@ public class PaymentVoucherImpDao extends OracleDaoFactory implements PaymentVou
             st.registerOutParameter(7, OracleTypes.VARCHAR);
             st.execute();
         	
+            boolean xxxx = connection.isClosed();
 
             /**
              * Cursor: Detail
@@ -192,33 +193,40 @@ public class PaymentVoucherImpDao extends OracleDaoFactory implements PaymentVou
             	listPaymentDetail.add(o);
             }
             objectOut.setListPaymentDetail(listPaymentDetail);
+            rsDetail.close();
+            
+            boolean eeeeeee = connection.isClosed();
+            
+            ResultSet xxxxxxx = (ResultSet) st.getObject(5);
             
             /**
              * Cursor: Cuota
              */
-            ResultSet rsCuota = (ResultSet) st.getObject(5);
-            List<PaymentCuota> listPaymentCuota = new ArrayList<PaymentCuota>();
-            while (rsCuota.next()) {
-            	
-            	PaymentCuota o = new PaymentCuota();
-            	o.setCampo(rsCuota.getString("CAMPO"));
-            	o.setRecId(rsCuota.getString("REC_ID"));
-            	o.setConId(rsCuota.getString("CON_ID"));
-            	o.setRecTipo(rsCuota.getString("REC_TIPO"));
-            	o.setRecNCuota(rsCuota.getString("REC_NCUOTA"));
-            	o.setCieFCierreMes(rsCuota.getString("CIE_FCIERREMES"));
-            	o.setDescripcion(rsCuota.getString("DESCRIPCION"));
-            	listPaymentCuota.add(o);
+            if (st.getObject(5) != null) {
+                ResultSet rsCuota = (ResultSet) st.getObject(5);
+                List<PaymentCuota> listPaymentCuota = new ArrayList<PaymentCuota>();
+                while (rsCuota.next()) {
+                	
+                	PaymentCuota o = new PaymentCuota();
+                	o.setCampo(rsCuota.getString("CAMPO"));
+                	o.setRecId(rsCuota.getString("REC_ID"));
+                	o.setConId(rsCuota.getString("CON_ID"));
+                	o.setRecTipo(rsCuota.getString("REC_TIPO"));
+                	o.setRecNCuota(rsCuota.getString("REC_NCUOTA"));
+                	o.setCieFCierreMes(rsCuota.getString("CIE_FCIERREMES"));
+                	o.setDescripcion(rsCuota.getString("DESCRIPCION"));
+                	listPaymentCuota.add(o);
+                }
+                objectOut.setListPaymentCuota(listPaymentCuota);
+                rsCuota.close();
             }
-            objectOut.setListPaymentCuota(listPaymentCuota);
-        	
+            
             response.setObject(objectOut);
             response.setStatus(Util.intToBool(st.getInt(6)));
             response.setMessage(st.getString(7));
             
             st.close();
-            rsCuota.close();
-            rsDetail.close();
+            
 
         } catch (Exception e) {
         	e.getStackTrace();
