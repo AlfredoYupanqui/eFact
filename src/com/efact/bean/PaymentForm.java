@@ -26,8 +26,8 @@ public class PaymentForm implements Serializable {
 	private List<PaymentDetailProcess> paymentDetailProcess;
 
 	private String numeroComprobante;
-	private int exito;
-	private String mensaje;
+//	private int exito;
+//	private String mensaje;
 	
 	public String getQueryContrato() {
 		return queryContrato;
@@ -127,18 +127,6 @@ public class PaymentForm implements Serializable {
 	}
 	public void setNumeroComprobante(String numeroComprobante) {
 		this.numeroComprobante = numeroComprobante;
-	}
-	public int getExito() {
-		return exito;
-	}
-	public void setExito(int exito) {
-		this.exito = exito;
-	}
-	public String getMensaje() {
-		return mensaje;
-	}
-	public void setMensaje(String mensaje) {
-		this.mensaje = mensaje;
 	}
 	public String getPaymentDetailProcessStr() {
 		

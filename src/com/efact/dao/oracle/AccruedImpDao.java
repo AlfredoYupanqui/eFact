@@ -19,7 +19,7 @@ public class AccruedImpDao extends OracleDaoFactory implements AccruedDao  {
 		
         List<AccruedConciliation> list = new ArrayList<>();
 
-        try{
+        try {
     		
             String sql = "{ call FIN_PKG_REGISTRODEVENGADOS.PREVIEW_CONCILIA_CONSOLIDA(?, ?, ?, ?, ?) } "; 
             
@@ -54,7 +54,7 @@ public class AccruedImpDao extends OracleDaoFactory implements AccruedDao  {
             rs.close();
             st.close();
             
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
@@ -68,7 +68,7 @@ public class AccruedImpDao extends OracleDaoFactory implements AccruedDao  {
 
     	AccruedConciliation obj = new AccruedConciliation();
 
-        try{
+        try {
         	
             String sql = "{ call FIN_PKG_REGISTRODEVENGADOS.EJECUTA_CONCILIA_CONSOLIDA(?, ?, ?, ?) }";
             
@@ -85,7 +85,7 @@ public class AccruedImpDao extends OracleDaoFactory implements AccruedDao  {
 
             st.close();
         
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
@@ -99,7 +99,7 @@ public class AccruedImpDao extends OracleDaoFactory implements AccruedDao  {
 
     	List<AccruedIssueDropdown> list = new ArrayList<>();
 
-        try{
+        try {
         	
             String sql = "{ ? = call FIN_PKG_REGISTRODEVENGADOS.F_LISTADO_FECHAS_CIE_DEVEN(?, ?) }"; 
             
@@ -121,7 +121,7 @@ public class AccruedImpDao extends OracleDaoFactory implements AccruedDao  {
                 list.add(obj);
             }
         
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
@@ -135,7 +135,7 @@ public class AccruedImpDao extends OracleDaoFactory implements AccruedDao  {
 
         List<AccruedIssue> list = new ArrayList<>();
 
-        try{
+        try {
 	        	
 	        String sql = "{ ? = call FIN_PKG_REGISTRODEVENGADOS.F_PREVIEW_EMITE_DEVENGADO(?, ?, ?) } "; 
 	        
@@ -171,7 +171,7 @@ public class AccruedImpDao extends OracleDaoFactory implements AccruedDao  {
 	        rs.close();
 	        st.close();
 
-	    } catch (Exception e){
+	    } catch (Exception e) {
 	    	e.getStackTrace();
 	    } finally {
 	        this.closeConnection();
@@ -187,7 +187,7 @@ public class AccruedImpDao extends OracleDaoFactory implements AccruedDao  {
 		
 		List<AccruedIssue> list = new ArrayList<>();
 
-      try{
+      try {
       	
           String sql = "{ call FIN_PKG_REGISTRODEVENGADOS.EMISION_DEVENGADO_CONSOLIDA(?, ?, ?, ?, ?, ?, ?, ?) }";
           
@@ -204,39 +204,30 @@ public class AccruedImpDao extends OracleDaoFactory implements AccruedDao  {
           st.registerOutParameter(8, OracleTypes.FLOAT);
           st.execute();
 										  
-          
           ResultSet rs = (ResultSet) st.getObject(6);
           
           if (Util.floatToBool(st.getFloat(8))) {
               while (rs.next()){
               	
             	  AccruedIssue obj = new AccruedIssue();
-              	
                   obj.setLote(rs.getString("LOTE"));
                   obj.setTipo(rs.getString("TIPO"));
                   obj.setTotal(rs.getString("TOTAL"));
                   obj.setResultado(st.getString(7));
                   obj.setStatus(Util.floatToBool(st.getFloat(8)));
-                  
-                  System.out.print("LOTE: " + rs.getString("LOTE"));
-                  System.out.print("TIPO: " + rs.getString("TIPO"));
-                  System.out.print("TOTAL: " + rs.getString("TOTAL"));
-                  
                   list.add(obj);
               }
           } else {
         	  AccruedIssue obj = new AccruedIssue();
-          	
               obj.setResultado(st.getString(7));
               obj.setStatus(Util.floatToBool(st.getFloat(8)));
-              
               list.add(obj);
           }
       
           rs.close();
           st.close();
           
-      } catch (Exception e){
+      } catch (Exception e) {
     	  e.getStackTrace();
       } finally {
           this.closeConnection();

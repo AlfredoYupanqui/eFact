@@ -96,8 +96,7 @@ public class VoucherImpDao extends OracleDaoFactory implements VoucherDao  {
 		VoucherTrData objectOut = new VoucherTrData();
 		List<VoucherTrDataDetail> listDetail = new ArrayList<>();
 		
-
-        try{
+        try {
     		
             String sql = "{ call FIN_PKG_REGISTROVENTASLOTE.LISTAR_DETALLE_RECAUDO(?, ?, ?, ?) } "; 
             
@@ -148,8 +147,8 @@ public class VoucherImpDao extends OracleDaoFactory implements VoucherDao  {
             rsReg.close();
             st.close();
             
-        } catch (Exception e){
-        	System.out.print("VoucherTrData- Exception ::::: " + e.getMessage());
+        } catch (Exception e) {
+        	e.getStackTrace();
         } finally {
             this.closeConnection();
         }
@@ -219,7 +218,7 @@ public class VoucherImpDao extends OracleDaoFactory implements VoucherDao  {
 
         List<Voucher> list = new ArrayList<>();
 
-        try{
+        try {
     		
             String sql = "{ call FIN_PKG_REGISTROVENTASLOTE.P_GENERACOMPROBANTES(?, ?, ?, ?, ?, ?) }"; 
             
@@ -243,24 +242,19 @@ public class VoucherImpDao extends OracleDaoFactory implements VoucherDao  {
                     obj.setTotal(rs.getString("TOTAL"));
                     obj.setResultado(st.getString(5));
                     obj.setStatus(Util.floatToBool(st.getFloat(6)));
-                    
-                    
                     list.add(obj);
                 }
             } else {
             	Voucher obj = new Voucher();
                 obj.setResultado(st.getString(5));
                 obj.setStatus(Util.floatToBool(st.getFloat(6)));
-                
                 list.add(obj);
             }
-            
-            // System.out.print("search -- getQueryProcess ::::: " + fecProcess);
-            
+
             rs.close();
             st.close();
             
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
@@ -274,7 +268,7 @@ public class VoucherImpDao extends OracleDaoFactory implements VoucherDao  {
 		
 		List<VoucherDropdown> list = new ArrayList<>();
 
-        try{
+        try {
         	
             String sql = "{ call FIN_PKG_REGISTROVENTASLOTE.P_LISTA_TIPO_COMPROBANTES(?, ?) }"; 
             
@@ -287,16 +281,14 @@ public class VoucherImpDao extends OracleDaoFactory implements VoucherDao  {
             ResultSet rs = (ResultSet) st.getObject(2);
             
             while (rs.next()){
-            	
             	VoucherDropdown obj = new VoucherDropdown();
                 obj.setId(rs.getInt("CSC_TIPO"));
                 obj.setName(rs.getString("CSC_TIPO_NOMBRE"));
                 obj.setShortName(rs.getString("CSC_TIPO_NOMBRE_CORTO"));
-                
                 list.add(obj);
             }
         
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();

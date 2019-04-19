@@ -29,7 +29,7 @@ public class ActionSupportBase extends ActionSupport {
 	        try {
 	        	json.addProperty(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
 	        }catch (StringIndexOutOfBoundsException e) {
-	        	System.out.print("serializeToJSON -- Exception ::::: " + e.getMessage());
+	        	e.getStackTrace();
 			}
 	    }
 	    

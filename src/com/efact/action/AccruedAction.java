@@ -86,9 +86,7 @@ public class AccruedAction extends ActionSupportBase implements ServletRequestAw
         		sb.append("_");
             }
         }
-        
-        System.out.print("TEXTO_OUT ::: " + sb.toString());
-        
+
         accruedConciliation = accruedDao.processAccruedConciliation(sb.toString()); 
 
         return SUCCESS;
@@ -138,12 +136,12 @@ public class AccruedAction extends ActionSupportBase implements ServletRequestAw
 		
         String fields = request.getParameter("fields");
         AccruedIssue accruedIssue = gson.fromJson(serializeToJSON(fields), AccruedIssue.class);
-        System.out.println("msg 01");
+        
         AccruedDao accruedDao = dao.getAccruedDao();
         listAccruedIssue = accruedDao.issueSearch(accruedIssue);
         
 		this.excelStream = ExcelExport.accruedIssueExport(listAccruedIssue);
-		System.out.println("msg 02");
+
 		return SUCCESS;
 	}
 
@@ -154,10 +152,6 @@ public class AccruedAction extends ActionSupportBase implements ServletRequestAw
 
         AccruedDao accruedDao = dao.getAccruedDao();
         setListAccruedIssueResult(accruedDao.processAccruedIssue(accruedObj)); 
-        
-        //listNoteDebit = noteDebitDao.process(nbObj);
-        
-        System.out.print("GENERAR DEVENGADOS ::: ");
         
 		return SUCCESS;
 	}

@@ -49,8 +49,10 @@ public class ReportSalesRecord implements Serializable {
     private String querySequence;
     private String queryFrom;    
     private String queryTo;
-    private int 	queryVoucher;
+    private int queryVoucher;
     private String querySerie;
+    private int queryTipoDoi;
+    private String queryNumeroDoi;
     
 	public int getQuerySequence() {
 		return Util.strToInt(querySequence);
@@ -70,28 +72,18 @@ public class ReportSalesRecord implements Serializable {
 	public void setQueryTo(String queryTo) {
 		this.queryTo = queryTo;
 	}
-
 	public int getQueryVoucher() {
 		return queryVoucher;
 	}
 	public void setQueryVoucher(int queryvoucher) {
 		this.queryVoucher = queryvoucher;
 	}
-	/*
-	public String getVoucher() {
-		return queryVoucher;
-	}
-	public void setVoucher(String voucher) {
-		this.queryVoucher = voucher;
-	}
-	*/
 	public int getQuerySerie() {
 		return Util.strToInt(querySerie);
 	}
 	public void setQuerySerie(String querySerie) {
 		this.querySerie = querySerie;
 	}
-	
 	public String getFuente() {
 		return fuente;
 	}
@@ -311,6 +303,18 @@ public class ReportSalesRecord implements Serializable {
 	}
 	public void setTotaltotal_sol(String totaltotal_sol) {
 		this.totaltotal_sol = totaltotal_sol;
+	}
+	public int getQueryTipoDoi() {
+		return queryTipoDoi;
+	}
+	public void setQueryTipoDoi(int queryTipoDoi) {
+		this.queryTipoDoi = queryTipoDoi;
+	}
+	public String getQueryNumeroDoi() {
+		return queryNumeroDoi;
+	}
+	public void setQueryNumeroDoi(String queryNumeroDoi) {
+		this.queryNumeroDoi = queryNumeroDoi;
 	}
 
 }

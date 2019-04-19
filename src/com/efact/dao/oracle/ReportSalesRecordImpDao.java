@@ -9,6 +9,7 @@ import java.sql.Connection;
 
 import com.efact.bean.*;
 import com.efact.dao.interfaces.*;
+import com.efact.util.Util;
 import com.efact.dao.factory.OracleDaoFactory;
 import oracle.jdbc.OracleTypes;
 
@@ -19,9 +20,9 @@ public class ReportSalesRecordImpDao extends OracleDaoFactory implements ReportS
 		
         List<ReportSalesRecord> list = new ArrayList<>();
 
-        try{
+        try {
 
-            String sql = "{ ? = call FIN_PKG_REPORTES.F_REPORTE_VENTAS(?, ?, ?, ?, ?, ?) }"; 
+            String sql = "{ ? = call FIN_PKG_REPORTES.F_REPORTE_VENTAS(?, ?, ?, ?, ?, ?, ?, ?) }"; 
             
             Connection connection = OracleDaoFactory.getMainConnection();
 			CallableStatement st = connection.prepareCall(sql);
@@ -32,17 +33,9 @@ public class ReportSalesRecordImpDao extends OracleDaoFactory implements ReportS
             st.setInt(5, object.getQueryVoucher());
             st.setInt(6, object.getQuerySerie());
             st.setString(7, "EFACT");
+            st.setInt(8, object.getQueryTipoDoi());
+            st.setString(9, object.getQueryNumeroDoi());
             st.execute();
-
-            
-            /*
-            System.out.print(object.getQueryFrom());
-            System.out.print(object.getQueryTo());
-            
-            System.out.print("getQueryVoucher::"+object.getQueryVoucher());
-            System.out.print("getQuerySerie::"+object.getQuerySerie());
-            */
-            
             
             ResultSet rs = (ResultSet) st.getObject(1);
             
@@ -72,15 +65,11 @@ public class ReportSalesRecordImpDao extends OracleDaoFactory implements ReportS
             	obj.setOtros(rs.getString("OTROS")); 
             	obj.setRvb_imptotal(rs.getString("RVB_IMPTOTAL")); 
             	obj.setTcd_venta(rs.getString("TCD_VENTA")); 
-            	
             	obj.setRvb_femisiondev(rs.getInt("RVB_FEMISIONDEV"));            	            
             	obj.setRvb_tipodev(rs.getInt("RVB_TIPODEV")); 
             	obj.setRvb_seriedev(rs.getInt("RVB_SERIEDEV"));             	            	
             	obj.setRvb_numerodev(rs.getInt("RVB_NUMERODEV")); 
-            	
-            	//obj.setRvb_tipocambiodev(rs.getInt("RVB_TIPOCAMBIODEV")); 
             	obj.setRvb_tipocambiodev(rs.getString("RVB_TIPOCAMBIODEV"));
-            	
             	obj.setTotalafectas_sol(rs.getString("TOTALAFECTAS_SOL")); 
             	obj.setTotalnoafectas_sol(rs.getString("TOTALNOAFECTAS_SOL")); 
             	obj.setTotaligv_sol(rs.getString("TOTALIGV_SOL")); 
@@ -88,7 +77,6 @@ public class ReportSalesRecordImpDao extends OracleDaoFactory implements ReportS
             	obj.setRvb_tdocumento(rs.getInt("RVB_TDOCUMENTO")); 
             	obj.setRvb_id(rs.getInt("RVB_ID")); 
             	
-
                 list.add(obj);
             }
             
@@ -156,7 +144,6 @@ public class ReportSalesRecordImpDao extends OracleDaoFactory implements ReportS
 	            
 	            Connection connection = OracleDaoFactory.getMainConnection();
 				CallableStatement st = connection.prepareCall(sql);  
-
 				st.registerOutParameter(1, OracleTypes.CURSOR);
 	            st.execute();
 	            	            
@@ -171,6 +158,9 @@ public class ReportSalesRecordImpDao extends OracleDaoFactory implements ReportS
 	                
 	                list.add(obj);
 	            }
+	            
+	            rs.close();
+	            st.close();
 	        
 	        } catch (Exception e){
 	        	e.getStackTrace();
@@ -179,6 +169,55 @@ public class ReportSalesRecordImpDao extends OracleDaoFactory implements ReportS
 	        }
 	        
 	        return list;
+	}
+	
+	@Override
+	public Response listarTipoDoi() throws Exception {
+			
+		Response response = new Response();
+
+        try {
+
+            String sql = "{ call FIN_PKG_REPORTES.P_LISTA_INICIAL(?, ?, ?) }"; 
+            
+            Connection connection = OracleDaoFactory.getMainConnection();
+			CallableStatement st = connection.prepareCall(sql);
+			st.registerOutParameter(1, OracleTypes.CURSOR);
+            st.registerOutParameter(2, OracleTypes.NUMBER);
+            st.registerOutParameter(3, OracleTypes.VARCHAR);
+            st.execute();
+            
+            ResultSet rsTipoDoi = (ResultSet) st.getObject(1);
+            List<PaymentTipoDoi> listTipoDoi = new ArrayList<PaymentTipoDoi>();
+            
+            while (rsTipoDoi.next()) {
+            	PaymentTipoDoi o = new PaymentTipoDoi();
+            	o.setIdTipoDoi(rsTipoDoi.getInt("ID_TIPO_DOI"));
+            	o.setNombreCorto(rsTipoDoi.getString("NOMBRE_CORTO"));    		    
+            	o.setFlagTipo(rsTipoDoi.getInt("FLAG_TIPO"));
+            	o.setLongitud(rsTipoDoi.getInt("LONGITUD"));
+                o.setFlagLongitud(rsTipoDoi.getInt("FLAG_LONGITUD"));    		    
+                o.setIdEquivalencia(rsTipoDoi.getInt("ID_EQUIVALENCIA"));
+                listTipoDoi.add(o);
+            }
+            
+            response.setObjectList(listTipoDoi);
+            response.setStatus(Util.intToBool(st.getInt(2)));
+            response.setMessage(st.getString(3));
+            
+            rsTipoDoi.close();
+            st.close();
+        
+        } catch (Exception e) {
+        	e.getStackTrace();
+        	
+            response.setStatus(false);
+            response.setMessage(e.getMessage());
+        } finally {
+            this.closeConnection();
+        }
+        
+        return response;
 	}
 
 }

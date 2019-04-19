@@ -8,13 +8,16 @@
 	</tr>
 </s:if>
 <s:else>
+
+	<s:set var="counter" value="1"/>
 	
 	<s:iterator value="listAccruedIssue" var="object" status="status">
 		<tr class="<s:if test="%{#object.codRecaudo != null && #object.codRecaudo != ''}">bg-teal-active</s:if>">
 			<td>
 				<s:if test="%{#object.codRecaudo != null && #object.codRecaudo != ''}">
 					<span class="badge bg-aqua-active">
-						<s:property value="%{#status.index + 1}"/>
+						<s:property value = "%{#counter}"/>
+						<s:set var="counter" value="%{#counter+1}"/>
 					</span>
 					
 					<input type="hidden" name="rea_id" value="<s:property value = "#object.recaudoId"/>">

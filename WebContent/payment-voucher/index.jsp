@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%@ include file="../themes/adminLTE/header.jsp" %>
 
@@ -44,7 +44,7 @@
 		                <div class="form-group">
 		                  <label for="">Tipo Doi</label>
 		                  <select class="form-control" id="tipoDoi" name="queryTipoDoi">
-		                  	<s:iterator value="paymentHeader.listPaymentTipoDoi" var="obj">
+		                  	<s:iterator value="paymentHeader.object.listPaymentTipoDoi" var="obj">
 		                  		<option 
 		                  			value="<s:property value = "#obj.idEquivalencia"/>" 
 		                  			data-longitud="<s:property value = "#obj.longitud"/>" 
@@ -66,7 +66,7 @@
 					          </div>
 					          <input 
 					          		type="text" 
-					          		maxlength="<s:property value = "paymentHeader.listPaymentTipoDoi[0].longitud"/>" 
+					          		maxlength="<s:property value = "paymentHeader.object.listPaymentTipoDoi[0].longitud"/>" 
 					          		onkeyup="this.value = ( isNaN(this.value) ? '' : this.value);" 
 					          		class="form-control" 
 					          		name="queryNumeroDoi">
@@ -132,7 +132,7 @@
 	              	Detalle
 				  </h3>
             </div>
-            <div class="box-body">
+            <div class="payment-form box-body">
             
             	<input type="hidden" name="querySerieNumero">
             
@@ -157,7 +157,7 @@
 					    <div class="form-group">
 					      <label for="">Comprobante</label>
 		                  <select class="form-control" name="queryComprobante" readonly="readonly">
-		                  	<s:iterator value="paymentHeader.listPaymentTipoComprobante" var="obj">
+		                  	<s:iterator value="paymentHeader.object.listPaymentTipoComprobante" var="obj">
 		                  		<option value="<s:property value = "#obj.cscTipo"/>">
 		                  			<s:property value = "#obj.cscTipoNombre"/>
 	                  			</option>
@@ -249,7 +249,7 @@
 					    <div class="form-group">
 					      <label for="">Moneda</label>
 		                  <select class="form-control input-type-contract" name="queryMoneda">
-		                  	<s:iterator value="paymentHeader.listPaymentTipoMoneda" var="obj">
+		                  	<s:iterator value="paymentHeader.object.listPaymentTipoMoneda" var="obj">
 		                  		<option value="<s:property value = "#obj.idMoneda"/>">
 		                  			<s:property value = "#obj.descripcion"/>
 	                  			</option>
@@ -341,7 +341,7 @@
 	       <td>
 		        <select class="form-control" name="gridRecaudo">
 		        	<option value="">[ seleccionar ]</option>
-		        	<s:iterator value="paymentHeader.listPaymentRecaudo" var="obj">
+		        	<s:iterator value="paymentHeader.object.listPaymentRecaudo" var="obj">
 		        		<option value="<s:property value = "#obj.idRecaudo"/>">
 		        			<s:property value = "#obj.descripcion"/>
 		       			</option>
@@ -351,7 +351,7 @@
 	       <td>
 		        <select class="form-control" name="gridConcepto">
 	        		<option value="">[ seleccionar ]</option>
-		        	<s:iterator value="paymentHeader.listPaymentConcepto" var="obj">
+		        	<s:iterator value="paymentHeader.object.listPaymentConcepto" var="obj">
 		        		<option 
 		        			value="<s:property value = "#obj.idConcepto"/>" 
 		        			class="grid-concepto"

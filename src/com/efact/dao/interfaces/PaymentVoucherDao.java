@@ -6,8 +6,8 @@ import com.efact.bean.*;
 
 public interface PaymentVoucherDao {
 
-	public PaymentHeader getHeader() throws Exception;
-	public PaymentBody search(PaymentForm paymentProcess) throws Exception;
-	public PaymentForm process(PaymentForm paymentProcess) throws Exception;
+	public Response getHeader() throws Exception;
+	public Response search(PaymentForm paymentProcess) throws Exception;
+	public Response process(PaymentForm paymentProcess) throws Exception;
 
 }

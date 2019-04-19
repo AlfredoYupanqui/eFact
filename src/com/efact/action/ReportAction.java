@@ -22,14 +22,14 @@ import java.io.InputStream;
 public class ReportAction extends ActionSupportBase implements ServletRequestAware, ServletResponseAware  {
 	
 	private static final long serialVersionUID = 1L;
+	
 	private DaoFactory dao;
 	private Gson gson;
 	private InputStream excelStream;
 	private List<Sequence> listSequence;
-	//
 	private List<VoucherDropdown> listVoucherDropdown;
-	private List<Series> listSeries;	
-	//
+	private List<Series> listSeries;
+	private Response listarTipoDoi;
 	private List<ReportSalesRecord> listReportSalesRecord;
 	private List<ReportSalesSummary> listReportSalesSummary;
 	private String currentDate, currentDateFirstDayOfMonth;
@@ -44,12 +44,10 @@ public class ReportAction extends ActionSupportBase implements ServletRequestAwa
 	
 	@Override
 	public String execute() throws Exception {
-
 		return SUCCESS;
 	}
 	
 	public String index() throws Exception {
-		        
 		return SUCCESS;
 	}
 	
@@ -57,11 +55,15 @@ public class ReportAction extends ActionSupportBase implements ServletRequestAwa
 		
 		SequenceDao sequenceDao = dao.getSequenceDao();
 		listSequence = sequenceDao.findAll();
+
+		VoucherDao voucherDao = dao.getVoucherDao();
+		listVoucherDropdown = voucherDao.listVoucherDropdown(Const.MODULE_REPORT_SALES_RECORD);
 		
-		ReportSalesRecordDao rsrDao  = dao.getReportSalesRecordDao();	
+		NoteCreditDao ncDao = dao.getNoteCreditDao();
+		listSeries = ncDao.listSeries();
 		
-		listVoucherDropdown = rsrDao.listVoucherDropdown(Const.MODULE_REPORT_SALES_RECORD);
-		listSeries = rsrDao.listSeries();
+		ReportSalesRecordDao rsDao = dao.getReportSalesRecordDao();
+		listarTipoDoi = rsDao.listarTipoDoi();
 		
 		currentDate = Dates.getCurrentDate();
 		currentDateFirstDayOfMonth = Dates.getCurrentDateFirstDayOfMonth();
@@ -94,7 +96,6 @@ public class ReportAction extends ActionSupportBase implements ServletRequestAwa
 	}
 	
 	public String salesSummary() throws Exception {
-		
         return SUCCESS;
 	}
 	
@@ -137,7 +138,6 @@ public class ReportAction extends ActionSupportBase implements ServletRequestAwa
 	public void setExcelStream(InputStream excelStream) {
 		this.excelStream = excelStream;
 	}
-	
 	
 	@Override
 	public void setServletResponse(HttpServletResponse httpServletResponse) {
@@ -200,6 +200,13 @@ public class ReportAction extends ActionSupportBase implements ServletRequestAwa
 	public void setCurrentDateFirstDayOfMonth(String currentDateFirstDayOfMonth) {
 		this.currentDateFirstDayOfMonth = currentDateFirstDayOfMonth;
 	}
-	
+
+	public Response getListarTipoDoi() {
+		return listarTipoDoi;
+	}
+
+	public void setListarTipoDoi(Response listarTipoDoi) {
+		this.listarTipoDoi = listarTipoDoi;
+	}
 	
 }

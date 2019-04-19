@@ -10,156 +10,21 @@ import java.sql.Connection;
 import com.efact.bean.*;
 import com.efact.dao.interfaces.*;
 import com.efact.util.Dates;
+import com.efact.util.Util;
 import com.efact.dao.factory.OracleDaoFactory;
 import oracle.jdbc.OracleTypes;
 
 
 public class PaymentVoucherImpDao extends OracleDaoFactory implements PaymentVoucherDao  {
-	
-	@Override
-	public PaymentBody search(PaymentForm paymentForm) throws Exception {
-		
-		PaymentBody objectOut = new PaymentBody();
 
-        try{
-    		
-            String sql = "{ call FIN_PKG_COMPROBANTEMANUAL.USP_LISTAR_DETALLE(?, ?, ?, ?, ?, ?, ?) } "; 
-            
-            Connection connection = OracleDaoFactory.getMainConnection();
-			CallableStatement st = connection.prepareCall(sql);
-			st.setString(1, paymentForm.getQueryContrato());
-            st.setInt(2, paymentForm.getQueryTipoDoi());
-            st.setString(3, paymentForm.getQueryNumeroDoi());
-            st.registerOutParameter(4, OracleTypes.CURSOR);
-            st.registerOutParameter(5, OracleTypes.CURSOR);
-            st.registerOutParameter(6, OracleTypes.NUMBER);
-            st.registerOutParameter(7, OracleTypes.VARCHAR);
-            st.execute();
+	@Override
+	public Response getHeader() throws Exception {	
+		
+		Response response = new Response();
+
+        try {
         	
-            
-            int exito = st.getInt(6);
-            String mensaje = st.getString(7);
-            
-            
-            /**
-             * Cursor: Detail
-             */
-            ResultSet rsDetail = (ResultSet) st.getObject(4);
-            List<PaymentDetail> listPaymentDetail = new ArrayList<PaymentDetail>();
-            while (rsDetail.next()) {
-            	
-            	int fechaEmision = rsDetail.getInt("FECHAEMISION");
-            	String fechaEmisionStr = Dates.intToDate(fechaEmision);
-            	
-            	
-            	int fechaVencimiento = rsDetail.getInt("FECHAVENCIMIENTO");
-            	String fechaVencimientoStr = Dates.intToDate(fechaVencimiento);
-            	
-            	PaymentDetail o = new PaymentDetail();
-            	o.setTitular(rsDetail.getString("TITULAR"));
-            	o.setDireccion(rsDetail.getString("DIRECCION"));
-            	o.setTipoComprobante(rsDetail.getInt("TIPOCOMPROBANTE"));
-            	o.setSerie(rsDetail.getInt("SERIE"));
-            	o.setSerieNombre(rsDetail.getString("SERIENOMBRE"));
-            	
-            	o.setMoneda(rsDetail.getInt("MONEDA"));
-            	o.setFechaEmision(fechaEmisionStr);
-            	o.setFechaVencimiento(fechaVencimientoStr);
-            	
-            	listPaymentDetail.add(o);
-            }
-            objectOut.setListPaymentDetail(listPaymentDetail);
-            rsDetail.close();
-            
-            
-            /**
-             * Cursor: Cuota
-             */
-            ResultSet rsCuota = (ResultSet) st.getObject(5);
-            List<PaymentCuota> listPaymentCuota = new ArrayList<PaymentCuota>();
-            while (rsCuota.next()) {
-            	
-            	PaymentCuota o = new PaymentCuota();
-            	o.setCampo(rsCuota.getString("CAMPO"));
-            	o.setRecId(rsCuota.getString("REC_ID"));
-            	o.setConId(rsCuota.getString("CON_ID"));
-            	o.setRecTipo(rsCuota.getString("REC_TIPO"));
-            	o.setRecNCuota(rsCuota.getString("REC_NCUOTA"));
-            	o.setCieFCierreMes(rsCuota.getString("CIE_FCIERREMES"));
-            	o.setDescripcion(rsCuota.getString("DESCRIPCION"));
-            	listPaymentCuota.add(o);
-            }
-            objectOut.setListPaymentCuota(listPaymentCuota);
-            rsCuota.close();
-            
-            st.close();
-            
-        } catch (Exception e) {
-        	e.getStackTrace();
-        } finally {
-            this.closeConnection();
-        }
-        
-        return objectOut;
-		
-	}
-	
-	@Override
-	public PaymentForm process(PaymentForm paymentForm) throws Exception {
-		
-		PaymentForm objectOut = new PaymentForm();
-
-        try{
-    		
-            String sql = "{ call FIN_PKG_COMPROBANTEMANUAL.USP_EMITIR_COMPROBANTEMANUAL(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) } "; 
-            
-            Connection connection = OracleDaoFactory.getMainConnection();
-			CallableStatement st = connection.prepareCall(sql);
-			st.setString(1, paymentForm.getQueryContrato());
-            st.setInt(2, paymentForm.getQueryTipoDoi());
-            st.setString(3, paymentForm.getQueryNumeroDoi());
-            st.setString(4, paymentForm.getQueryTitular());
-            st.setString(5, paymentForm.getQueryDireccion());
-            st.setInt(6, paymentForm.getQueryComprobante());
-            st.setInt(7, paymentForm.getQuerySerieComprobante());
-            st.setInt(8, paymentForm.getQueryFechaEmision());
-            st.setInt(9, paymentForm.getQueryFechaVencimiento());
-            st.setFloat(10, paymentForm.getQueryTotal());
-            st.setString(11, paymentForm.getQueryMoneyIntoWords());
-            st.setString(12, paymentForm.getQueryMonedaTipo());
-            st.setString(13, paymentForm.getQueryMonedaDescripcion());
-            st.setString(14, paymentForm.getPaymentDetailProcessStr());
-            st.setString(15, paymentForm.getAppUser());
-            st.registerOutParameter(16, OracleTypes.VARCHAR);
-            st.registerOutParameter(17, OracleTypes.NUMBER);
-            st.registerOutParameter(18, OracleTypes.VARCHAR);  
-            st.execute();
-            
-            String xxx = st.getString(16);
-            int aaaaa = st.getInt(17);
-            String bbbb = st.getString(18);
-            
-            objectOut.setNumeroComprobante(xxx);
-            objectOut.setExito(aaaaa);
-            objectOut.setMensaje(bbbb);
-        	
-            st.close();
-            
-        } catch (Exception e) {
-        	e.getStackTrace();
-        } finally {
-            this.closeConnection();
-        }
-        
-        return objectOut;
-	}
-
-	@Override
-	public PaymentHeader getHeader() throws Exception {	
-		
-		PaymentHeader objectOut = new PaymentHeader();
-
-        try{
+        	PaymentHeader objectOut = new PaymentHeader();
     		
             String sql = "{ call FIN_PKG_COMPROBANTEMANUAL.USP_LISTAR_CABECERA(?, ?, ?, ?, ?, ?, ?) } "; 
             
@@ -249,6 +114,10 @@ public class PaymentVoucherImpDao extends OracleDaoFactory implements PaymentVou
             	listConcepto.add(o);
             }                
             objectOut.setListPaymentConcepto(listConcepto);  
+
+            response.setObject(objectOut);
+            response.setStatus(Util.intToBool(st.getInt(6)));
+            response.setMessage(st.getString(7));
             
             /**
              * Close
@@ -258,15 +127,162 @@ public class PaymentVoucherImpDao extends OracleDaoFactory implements PaymentVou
             rsTipoComprobante.close();
             rsTipoMoneda.close();
             rsConcepto.close();
-
             st.close();
             
         } catch (Exception e) {
         	e.getStackTrace();
+        	
+            response.setStatus(false);
+            response.setMessage(e.getMessage());
         } finally {
             this.closeConnection();
         }
         
-        return objectOut;
+        return response;
 	}
+	
+	@Override
+	public Response search(PaymentForm paymentForm) throws Exception {
+		
+		Response response = new Response();
+		
+        try {
+    		
+        	PaymentBody objectOut = new PaymentBody();
+        	
+            String sql = "{ call FIN_PKG_COMPROBANTEMANUAL.USP_LISTAR_DETALLE(?, ?, ?, ?, ?, ?, ?) } "; 
+            
+            Connection connection = OracleDaoFactory.getMainConnection();
+			CallableStatement st = connection.prepareCall(sql);
+			st.setString(1, paymentForm.getQueryContrato());
+            st.setInt(2, paymentForm.getQueryTipoDoi());
+            st.setString(3, paymentForm.getQueryNumeroDoi());
+            st.registerOutParameter(4, OracleTypes.CURSOR);
+            st.registerOutParameter(5, OracleTypes.CURSOR);
+            st.registerOutParameter(6, OracleTypes.NUMBER);
+            st.registerOutParameter(7, OracleTypes.VARCHAR);
+            st.execute();
+        	
+
+            /**
+             * Cursor: Detail
+             */
+            ResultSet rsDetail = (ResultSet) st.getObject(4);
+            List<PaymentDetail> listPaymentDetail = new ArrayList<PaymentDetail>();
+            while (rsDetail.next()) {
+            	
+            	int fechaEmision = rsDetail.getInt("FECHAEMISION");
+            	String fechaEmisionStr = Dates.intToDate(fechaEmision);
+            	
+            	
+            	int fechaVencimiento = rsDetail.getInt("FECHAVENCIMIENTO");
+            	String fechaVencimientoStr = Dates.intToDate(fechaVencimiento);
+            	
+            	PaymentDetail o = new PaymentDetail();
+            	o.setTitular(rsDetail.getString("TITULAR"));
+            	o.setDireccion(rsDetail.getString("DIRECCION"));
+            	o.setTipoComprobante(rsDetail.getInt("TIPOCOMPROBANTE"));
+            	o.setSerie(rsDetail.getInt("SERIE"));
+            	o.setSerieNombre(rsDetail.getString("SERIENOMBRE"));
+            	
+            	o.setMoneda(rsDetail.getInt("MONEDA"));
+            	o.setFechaEmision(fechaEmisionStr);
+            	o.setFechaVencimiento(fechaVencimientoStr);
+            	
+            	listPaymentDetail.add(o);
+            }
+            objectOut.setListPaymentDetail(listPaymentDetail);
+            
+            /**
+             * Cursor: Cuota
+             */
+            ResultSet rsCuota = (ResultSet) st.getObject(5);
+            List<PaymentCuota> listPaymentCuota = new ArrayList<PaymentCuota>();
+            while (rsCuota.next()) {
+            	
+            	PaymentCuota o = new PaymentCuota();
+            	o.setCampo(rsCuota.getString("CAMPO"));
+            	o.setRecId(rsCuota.getString("REC_ID"));
+            	o.setConId(rsCuota.getString("CON_ID"));
+            	o.setRecTipo(rsCuota.getString("REC_TIPO"));
+            	o.setRecNCuota(rsCuota.getString("REC_NCUOTA"));
+            	o.setCieFCierreMes(rsCuota.getString("CIE_FCIERREMES"));
+            	o.setDescripcion(rsCuota.getString("DESCRIPCION"));
+            	listPaymentCuota.add(o);
+            }
+            objectOut.setListPaymentCuota(listPaymentCuota);
+        	
+            response.setObject(objectOut);
+            response.setStatus(Util.intToBool(st.getInt(6)));
+            response.setMessage(st.getString(7));
+            
+            st.close();
+            rsCuota.close();
+            rsDetail.close();
+
+        } catch (Exception e) {
+        	e.getStackTrace();
+        	
+            response.setStatus(false);
+            response.setMessage(e.getMessage());
+        } finally {
+            this.closeConnection();
+        }
+        
+        return response;
+	}
+	
+	@Override
+	public Response process(PaymentForm paymentForm) throws Exception {
+		
+		Response response = new Response();
+
+        try {
+        	
+        	PaymentForm objectOut = new PaymentForm();
+    		
+            String sql = "{ call FIN_PKG_COMPROBANTEMANUAL.USP_EMITIR_COMPROBANTEMANUAL(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) } "; 
+            
+            Connection connection = OracleDaoFactory.getMainConnection();
+			CallableStatement st = connection.prepareCall(sql);
+			st.setString(1, paymentForm.getQueryContrato());
+            st.setInt(2, paymentForm.getQueryTipoDoi());
+            st.setString(3, paymentForm.getQueryNumeroDoi());
+            st.setString(4, paymentForm.getQueryTitular());
+            st.setString(5, paymentForm.getQueryDireccion());
+            st.setInt(6, paymentForm.getQueryComprobante());
+            st.setInt(7, paymentForm.getQuerySerieComprobante());
+            st.setInt(8, paymentForm.getQueryFechaEmision());
+            st.setInt(9, paymentForm.getQueryFechaVencimiento());
+            st.setFloat(10, paymentForm.getQueryTotal());
+            st.setString(11, paymentForm.getQueryMoneyIntoWords());
+            st.setString(12, paymentForm.getQueryMonedaTipo());
+            st.setString(13, paymentForm.getQueryMonedaDescripcion());
+            st.setString(14, paymentForm.getPaymentDetailProcessStr());
+            st.setString(15, paymentForm.getAppUser());
+            st.registerOutParameter(16, OracleTypes.VARCHAR);
+            st.registerOutParameter(17, OracleTypes.NUMBER);
+            st.registerOutParameter(18, OracleTypes.VARCHAR);  
+            st.execute();
+            
+            objectOut.setNumeroComprobante(st.getString(16));
+            
+            response.setObject(objectOut);
+            response.setStatus(Util.intToBool(st.getInt(17)));
+            response.setMessage(st.getString(18));
+            
+            st.close();
+            
+        } catch (Exception e) {
+        	e.getStackTrace();
+        	
+            response.setStatus(false);
+            response.setMessage(e.getMessage());
+        } finally {
+            this.closeConnection();
+        }
+        
+        return response;
+	}
+
 }

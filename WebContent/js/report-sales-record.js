@@ -48,13 +48,8 @@
     	    var dataType = 'application/vnd.ms-excel';
     	    var tableSelect = document.getElementById(options.excelTableID);
     	    var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
-    	    
-    	    // Specify file name
     	    var filename = options.excelFilename?options.excelFilename+'.xls':'excel_data.xls';
-    	    
-    	    // Create download link element
     	    downloadLink = document.createElement("a");
-    	    
     	    document.body.appendChild(downloadLink);
     	    
     	    if(navigator.msSaveOrOpenBlob){
@@ -63,13 +58,8 @@
     	        });
     	        navigator.msSaveOrOpenBlob( blob, filename);
     	    }else{
-    	        // Create a link to the file
     	        downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
-    	    
-    	        // Setting the file name
     	        downloadLink.download = filename;
-    	        
-    	        //triggering the function
     	        downloadLink.click();
     	    }
     	};
@@ -97,12 +87,29 @@
         };
         
         base.voucher = function(context) {
-            var id = $('#select-voucher').val();  
+            var id = $('select#select-voucher').val();  
             $('#select-series').prop('selectedIndex',0);
             $('.select-series').hide();
             $('.voucher-' + id).show();
         };
         
+        base.changeDoi = function(context) {
+
+        	var flagTipo = $(context).find(':selected').data("flag-tipo");
+        	var flagLongitud = $(context).find(':selected').data("flag-longitud");
+        	var longitud = $(context).find(':selected').data("longitud");
+
+        	$("input[name=queryNumeroDoi]").val("").attr("maxlength", "").attr("onkeyup", "");
+        	
+        	if (flagLongitud == "1") {
+        		$("input[name=queryNumeroDoi]").attr("maxlength", longitud);
+        	}
+        	
+        	if (flagTipo == "5") {
+        		$("input[name=queryNumeroDoi]").attr("onkeyup", " this.value = ( isNaN(this.value) ? '' : this.value);  ");
+        	}
+        	
+        };
         
         // Private Functions
         function debug(e) {
@@ -123,7 +130,7 @@
                 bp.search(this);
             });
             
-            $(".report-export-excel").click(function( event ) {
+            $("button.report-export-excel").click(function( event ) {
                 bp.exportExcel(this);
             });
             
@@ -135,8 +142,12 @@
             	bp.queryFromChange(this);
         	});
             
-            $("#select-voucher").change(function(event) {
+            $("select#select-voucher").change(function(event) {
             	bp.voucher(this);
+        	});
+            
+            $("select[name=queryTipoDoi]").change(function(event) {
+            	bp.changeDoi(this);
         	});
         	
             $(document).ready(function(){

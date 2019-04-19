@@ -27,7 +27,7 @@ public class NoteCreditImpDao extends OracleDaoFactory implements NoteCreditDao 
 		
 		NoteCredit objectOut = new NoteCredit();
 
-        try{
+        try {
     		
             String sql = "{ call FIN_PKG_NOTACREDITO.LISTAR_CABECERA(?, ?, ?, ?) } "; 
             
@@ -61,7 +61,7 @@ public class NoteCreditImpDao extends OracleDaoFactory implements NoteCreditDao 
             st.close();
             
             
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
@@ -78,7 +78,7 @@ public class NoteCreditImpDao extends OracleDaoFactory implements NoteCreditDao 
 		float totalSum = 0;
         List<NoteCreditDetail> list = new ArrayList<>();
 
-        try{
+        try {
     		
             String sql = "{ call FIN_PKG_NOTACREDITO.LISTAR_DETALLE(?, ?, ?, ?) } "; 
             
@@ -128,7 +128,7 @@ public class NoteCreditImpDao extends OracleDaoFactory implements NoteCreditDao 
             rs.close();
             st.close();
             
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
@@ -142,7 +142,7 @@ public class NoteCreditImpDao extends OracleDaoFactory implements NoteCreditDao 
        
         List<NoteCreditType> list = new ArrayList<>();
 
-        try{
+        try {
 
             String sql = "{ call FIN_PKG_NOTACREDITO.LISTAR_TIPO_NOTACREDITO(?) } ";
             
@@ -164,7 +164,7 @@ public class NoteCreditImpDao extends OracleDaoFactory implements NoteCreditDao 
             rs.close();
             st.close();
             
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
@@ -178,7 +178,7 @@ public class NoteCreditImpDao extends OracleDaoFactory implements NoteCreditDao 
 		
 		NoteCredit objectOut = new NoteCredit();
 
-        try{
+        try {
     		
             String sql = "{ call FIN_PKG_NOTACREDITO.EMISION_NOTACREDITO("
             		+ "?, "
@@ -244,7 +244,7 @@ public class NoteCreditImpDao extends OracleDaoFactory implements NoteCreditDao 
 
             st.close();
             
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
@@ -258,15 +258,10 @@ public class NoteCreditImpDao extends OracleDaoFactory implements NoteCreditDao 
 		
 		List<Series> list = new ArrayList<>();
 
-        try{
-        	
-            //String sql = "{ call P_LISTAR_SERIE_COMPRO(?, ?) }";
-        	
+        try {
+
         	String sql = "{ call FIN_PKG_NOTACREDITO.P_LISTA_SERIES(?, ?) }";
-        	
-        	
-        	System.out.println("listSeries :: NC :::: ");
-            
+
             Connection connection = OracleDaoFactory.getMainConnection();
 			CallableStatement st = connection.prepareCall(sql);  
             st.setInt(1, 4);
@@ -285,7 +280,7 @@ public class NoteCreditImpDao extends OracleDaoFactory implements NoteCreditDao 
                 list.add(obj);
             }
         
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();

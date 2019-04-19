@@ -45,6 +45,14 @@ public class Util {
 		}
 	}
 	
+	public static boolean intToBool(int s) {
+		try {
+			return s > 0 ? true : false;
+		}catch (Exception e) {
+			return false;
+		}
+	}
+	
 	public static int strDateToInt(String s) {
 		try {
 			return Integer.valueOf(s.replace("-", ""));

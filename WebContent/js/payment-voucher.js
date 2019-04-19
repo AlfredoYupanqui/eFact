@@ -33,19 +33,33 @@
                 	$('div.content-body').hide();
                 	$('div.content-loading').show();
                 	$("button.payment-voucher-search").prop("disabled", true);
+                	$("button.payment-voucher-process").prop("disabled", true);
                 },
                 success: function(data, textStatus, jqXHR) {
 
+                	var response = JSON.parse(data);
+                	
+                	console.log(" ********* search ********* ");
+                	console.dir(response);
+                	
+                	$('div.content-loading').hide();
+                	$("button.payment-voucher-search").prop("disabled", false);
+                	
+                	if (!response.status) {
+                    	$('#modal-warning').find('.modal-body').html(response.message);
+                    	$('#modal-warning').modal('show');
+                    	
+                		return false;
+                	}
+            		
                 	hideShowForm(context);
                 	dropDownCuota(data);
                 	fillForm(data);
                 	requiredFieldsForm(context);
                 	
                 	$('div.content-body').show();
-                	$('div.content-loading').hide();
-                	$("button.payment-voucher-search").prop("disabled", false);
                 	$("button.payment-voucher-process").prop("disabled", false);
-                	$("table.table-payment-voucher").find("input, button, select").prop("disabled", false);
+                	$("div.payment-form").find("input, button, select").prop("disabled", false);
                 },
                 error: function(jqXHR, exception) {
                     console.log("error :: ajax :: search");
@@ -90,9 +104,6 @@
 			});
 			
 			row.paymentDetailProcess = detail;
-			
-			console.log(" **** process *** ");
-			console.dir(row);
 
             $.ajax({
                 url: options.contextPath + '/payment-voucher-process',
@@ -105,18 +116,46 @@
                 	$('#modal-process').find('.modal-body').html('<p><i class="fa fa-2x fa-refresh fa-spin"></i><span style="font-size: 16px; margin-left: 5px">Procesando...</span></p>');
                 	$('#modal-process').modal('show');
                 	$("button.payment-voucher-process").prop("disabled", true);
-                	$("table.table-payment-voucher").find("input, button, select").prop("disabled", true);
+                	$("button.payment-voucher-search").prop("disabled", true);
+                	$("div.payment-form").find("input, button, select").prop("disabled", true);
                 },
                 success: function(data, textStatus, jqXHR) {
-            		$('#modal-process').modal('show');
-            		$('#modal-process').find('.modal-body').html(data);
+                	
+                	var response = JSON.parse(data);
+                	
+                	console.log(" ********* process - success ********* ");
+                	console.dir(response);
+                	
             		$("button.payment-voucher-process").prop("disabled", false);
+            		$("button.payment-voucher-search").prop("disabled", false);
+            		$("table.table-payment-voucher").find("select, button").prop("disabled", false);
+            		$("input[name=gridNoAfecto]").prop("disabled", false);
+            		$("input[name=gridAfecto]").prop("disabled", false);
+            		$("select[name=queryMoneda]").prop("disabled", false);
+                	
+                	if (!response.status) {
+                		
+                    	$('#modal-warning').find('.modal-body').html(response.message);
+                    	$('#modal-process').modal('hide');
+                    	$('#modal-warning').modal('show');
+                    	
+                		return false;
+                	}
+                	
+            		$("button.payment-voucher-process").prop("disabled", true);
+            		$("div.payment-form").find("input, button, select").prop("disabled", true);
+                	$('input[name="querySerieComprobante"]').val(response.object.numeroComprobante);
+            		
+                	let html = '<table class="table table-condensed"><thead><tr><th><i class="fa fa-fw fa-align-justify"></i> Resultado</th></tr></thead><tbody><tr><td>' + response.object.numeroComprobante + '</td></tr></tbody></table>';
+            		$('#modal-process').find('.modal-body').html(html);
+            		$('#modal-process').modal('show');
                 },
                 error: function(jqXHR, exception) {
                     console.log("error :: ajax :: process");
                     
-                    $("table.table-payment-voucher").find("input, button, select").prop("disabled", false);
                     $("button.payment-voucher-process").prop("disabled", false);
+                    $("button.payment-voucher-search").prop("disabled", false);
+                    $("div.payment-form").find("input, button, select").prop("disabled", false);
                 }
             });
         };
@@ -147,7 +186,7 @@
             
             setTimeout(function(){
             	$(context).closest("tr").find("input[name=gridAfecto]").val(parseFloat(value).toFixed(2));
-        	}, 1500);
+        	}, 3500);
 
             $(context).closest("tr").find("input[name=gridIgv]").val(newIgv.toFixed(2));
             
@@ -161,7 +200,7 @@
         	
             setTimeout(function(){
             	$(context).closest("tr").find("input[name=gridNoAfecto]").val(parseFloat(value).toFixed(2));
-        	}, 1500);
+        	}, 3500);
         	
             sumRowSubTotal(context);
             sumTotalHeader();
@@ -193,9 +232,6 @@
         	let required = 0;
         	
     		$(".required").each(function (index, value) {
-        		
-        	    console.log(index + ':' + $(value).val()); 
-        	    
         	    if ($(value).val() == null) {
         	    	required++;
         	    }
@@ -208,11 +244,8 @@
             	return false;
         	}
         	
-        	
         	let tableRows = $("table.table-payment-voucher tbody tr").length;
         	
-        	console.log("tableRows::: " + tableRows);
-
         	if (tableRows <= 0) {
             	$('#modal-warning').find('.modal-body').html("Ingrese al menos un registro en la tabla.");
             	$('#modal-warning').modal('show');
@@ -228,18 +261,21 @@
         	var queryFechaEmision = $(context).val(); 
         	var queryFechaVencimiento = $('input[name="queryFechaVencimiento"]').val();
         	
+        	$('input[name="queryFechaVencimiento"]').val(queryFechaEmision);
+        	
+        	/*
         	if (new Date(queryFechaEmision) > new Date(queryFechaVencimiento))
         	{
         		$('input[name="queryFechaVencimiento"]').val(queryFechaEmision);
         	}
+        	*/
         };
         
         base.queryFechaVencimiento = function(context) {
         	var queryFechaVencimiento = $(context).val();
         	var queryFechaEmision = $('input[name="queryFechaEmision"]').val();
         	
-        	if (new Date(queryFechaVencimiento) < new Date(queryFechaEmision))
-        	{
+        	if (new Date(queryFechaVencimiento) < new Date(queryFechaEmision)) {
         		$('input[name="queryFechaEmision"]').val(queryFechaVencimiento);
             	$('#modal-warning').find('.modal-body').html("La fecha Vencimiento no puede ser menor que la fecha Emision.");
             	$('#modal-warning').modal('show');
@@ -258,7 +294,7 @@
         	dropdown.prop('selectedIndex', 0);
         	
         	data = JSON.parse(data);
-        	$.each(data.listPaymentCuota, function(key, value) {
+        	$.each(data.object.listPaymentCuota, function(key, value) {
         		dropdown.append('<option value=' + value.recTipo + '>' + value.campo + '</option>');
         	});
         }
@@ -266,6 +302,16 @@
         function cleanForm() {
         	$("input[name=queryTotal]").val("");
         	$("input[name=queryMoneyIntoWords]").val("");
+        	$("input[name=queryTitular]").val("");
+        	$("select[name=queryComprobante]").val("");
+        	$("input[name=querySerieNombre]").val("");
+        	$("input[name=querySerieNumero]").val("");
+        	//$("input[name=queryMoneda]").val("");
+        	$("input[name=queryDireccion]").val("");
+        	$("input[name=queryFechaEmision]").val("");
+        	$("input[name=queryFechaVencimiento]").val("");
+        	$("input[name=querySerieComprobante]").val("");
+        	
         	$("table.table-payment-voucher tbody").empty();
         }
         
@@ -273,17 +319,17 @@
         	
         	data = JSON.parse(data);
         	
-        	if (typeof data.listPaymentDetail === "undefined" || data.listPaymentDetail.length <= 0) {
+        	if (typeof data.object.listPaymentDetail === "undefined" || data.object.listPaymentDetail.length <= 0) {
         		return false;
         	}
         	
-        	let row = data.listPaymentDetail.shift();
+        	let row = data.object.listPaymentDetail.shift();
         	
         	$("input[name=queryTitular]").val(row.titular);
         	$("select[name=queryComprobante]").val(row.tipoComprobante);
         	$("input[name=querySerieNombre]").val(row.serieNombre);
         	$("input[name=querySerieNumero]").val(row.serie);
-        	$("input[name=queryMoneda]").val(row.moneda);
+        	$("select[name=queryMoneda]").val(row.moneda);
         	$("input[name=queryDireccion]").val(row.direccion);
         	$("input[name=queryFechaEmision]").val(row.fechaEmision);
         	$("input[name=queryFechaVencimiento]").val(row.fechaVencimiento);
@@ -292,12 +338,12 @@
         function requiredFieldsForm(context) {
     		
         	$("select[name=queryCuota]").removeClass("required");
-        	$("input[name=queryMoneda]").removeClass("required");
+        	$("select[name=queryMoneda]").removeClass("required");
         	
         	if (isTypeContract(context)) {
             	$("select[name=queryCuota]").addClass("required");
         	} else {
-              	$("input[name=queryMoneda]").addClass("required");
+              	$("select[name=queryMoneda]").addClass("required");
         	}
         }
         
@@ -378,12 +424,9 @@
             
             $("button.payment-voucher-process").click(function(event) {
             	
-            	var isValid = bp.validateForm(this);
-
-            	if (isValid) {
+            	if (bp.validateForm(this)) {
             		bp.process(this);
             	}
-
             });
             
             $("select[name=queryTipoDoi]").change(function(event) {

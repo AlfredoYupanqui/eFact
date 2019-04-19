@@ -101,20 +101,13 @@ public class VoucherAction extends ActionSupportBase implements ServletRequestAw
 		
         String recId = request.getParameter("recId");
         float recIdFloat = Util.strToFloat(recId);
-        
-        System.out.print("recIdFloat ::: " + recIdFloat);
-                
+     
         VoucherDao voucherDao = dao.getVoucherDao();
         listTrData = voucherDao.viewTrData(recIdFloat);
                 
 		return SUCCESS;
 	}
 
-	
-	
-	
-	
-	
 	public List<Program> getListProgram() {
 		return listProgram;
 	}

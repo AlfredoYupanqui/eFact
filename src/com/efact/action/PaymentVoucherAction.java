@@ -21,8 +21,8 @@ public class PaymentVoucherAction extends ActionSupportBase implements ServletRe
 	private static final long serialVersionUID = 1L;
 	private DaoFactory dao;
 	private Gson gson;
-	private PaymentHeader paymentHeader;
-	private PaymentForm paymentProcess;
+	private Response paymentHeader;
+	private String paymentProcessJson;
 	private String paymentBodyJson;
 	
 	private HttpServletRequest request = null;
@@ -52,7 +52,7 @@ public class PaymentVoucherAction extends ActionSupportBase implements ServletRe
         PaymentForm pp = gson.fromJson(serializeToJSON(fields), PaymentForm.class);
         
         PaymentVoucherDao daoPaymentVoucher = dao.getPaymentVoucherDao();
-    	PaymentBody paymentBody = daoPaymentVoucher.search(pp);        
+        Response paymentBody = daoPaymentVoucher.search(pp);        
         paymentBodyJson = gson.toJson(paymentBody);
         
         return SUCCESS;
@@ -66,7 +66,8 @@ public class PaymentVoucherAction extends ActionSupportBase implements ServletRe
         paymentForm.setAppUser("EZANABRIA");
 
         PaymentVoucherDao daoPaymentVoucher = dao.getPaymentVoucherDao();
-        paymentProcess = daoPaymentVoucher.process(paymentForm);
+        Response paymentProcess = daoPaymentVoucher.process(paymentForm);
+        paymentProcessJson = gson.toJson(paymentProcess);
         
 		return SUCCESS;
 	}
@@ -85,20 +86,20 @@ public class PaymentVoucherAction extends ActionSupportBase implements ServletRe
 		return serialVersionUID;
 	}
 
-	public PaymentHeader getPaymentHeader() {
+	public Response getPaymentHeader() {
 		return paymentHeader;
 	}
 
-	public void setPaymentHeader(PaymentHeader paymentHeader) {
+	public void setPaymentHeader(Response paymentHeader) {
 		this.paymentHeader = paymentHeader;
 	}
 
-	public PaymentForm getPaymentProcess() {
-		return paymentProcess;
+	public String getPaymentProcessJson() {
+		return paymentProcessJson;
 	}
 
-	public void setPaymentProcess(PaymentForm paymentProcess) {
-		this.paymentProcess = paymentProcess;
+	public void setPaymentProcessJson(String paymentProcessJson) {
+		this.paymentProcessJson = paymentProcessJson;
 	}
 
 	public String getPaymentBodyJson() {

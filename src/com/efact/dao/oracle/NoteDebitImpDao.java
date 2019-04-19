@@ -21,7 +21,7 @@ public class NoteDebitImpDao extends OracleDaoFactory implements NoteDebitDao  {
 
     	List<NoteDebitDropdown> list = new ArrayList<>();
 
-        try{
+        try {
         	
             String sql = "{ call FIN_PKG_NOTADEBITO.USP_LISTA_FECHAS(?, ?, ?) }"; 
             
@@ -43,7 +43,7 @@ public class NoteDebitImpDao extends OracleDaoFactory implements NoteDebitDao  {
                 list.add(obj);
             }
         
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
@@ -57,7 +57,7 @@ public class NoteDebitImpDao extends OracleDaoFactory implements NoteDebitDao  {
 		
         List<NoteDebit> list = new ArrayList<>();
 
-        try{
+        try {
     		
             String sql = "{ call FIN_PKG_NOTADEBITO.USP_LISTA_DETALLE(?, ?, ?) } "; 
             
@@ -66,7 +66,6 @@ public class NoteDebitImpDao extends OracleDaoFactory implements NoteDebitDao  {
 			st.setInt(1, object.getQueryGroup());
 			st.setInt(2, object.getQueryCieId());
             st.registerOutParameter(3, OracleTypes.CURSOR);
-            
             st.execute();
         	
             ResultSet rs = (ResultSet) st.getObject(3);
@@ -95,7 +94,7 @@ public class NoteDebitImpDao extends OracleDaoFactory implements NoteDebitDao  {
             rs.close();
             st.close();
             
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
@@ -109,7 +108,7 @@ public class NoteDebitImpDao extends OracleDaoFactory implements NoteDebitDao  {
 		
 		List<NoteDebit> list = new ArrayList<>();
 
-        try{
+        try {
     		
             String sql = "{ call FIN_PKG_NOTADEBITO.USP_PROCESO_MORA(?, ?, ?, ?, ?, ?, ?, ?) } ";
             
@@ -134,40 +133,30 @@ public class NoteDebitImpDao extends OracleDaoFactory implements NoteDebitDao  {
                 while (rs.next()){
                 	
                 	NoteDebit obj = new NoteDebit();
-                	
                     obj.setLote(rs.getString("LOTE"));
                     obj.setTipo(rs.getString("TIPO"));
                     obj.setTotal(rs.getString("TOTAL"));
                     obj.setResultado(st.getString(7));
                     obj.setStatus(Util.floatToBool(st.getFloat(8)));
-                    
-                    System.out.print("LOTE: " + rs.getString("LOTE"));
-                    System.out.print("TIPO: " + rs.getString("TIPO"));
-                    System.out.print("TOTAL: " + rs.getString("TOTAL"));
-                    
                     list.add(obj);
                 }
             } else {
             	NoteDebit obj = new NoteDebit();
-            	
                 obj.setResultado(st.getString(7));
                 obj.setStatus(Util.floatToBool(st.getFloat(8)));
-                
                 list.add(obj);
             }
         
             rs.close();
             st.close();            
                      
-        } catch (Exception e){
+        } catch (Exception e) {
         	e.getStackTrace();
         } finally {
             this.closeConnection();
         }
 
-        return list;        
-        
-						 
+        return list;			 
 	}
     
 }
