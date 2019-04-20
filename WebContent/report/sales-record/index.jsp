@@ -130,7 +130,7 @@
                 
 	        		<div class="col-md-2">
 		                <div class="form-group">
-		                  <label for="">Tipo Doi</label>
+		                  <label for="">Tipo DOI</label>
 		                  <select class="form-control" id="tipoDoi" name="queryTipoDoi">
 		                  	<s:iterator value="listarTipoDoi.objectList" var="obj">
 		                  		<option 
